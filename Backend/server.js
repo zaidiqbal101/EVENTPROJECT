@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import MongoDB from './models/db.js';
 import ContactDataGet from './controllers/contactDataGet.js';
+import InquiriesDataGet from './controllers/inquiriesDataGet.js';
 dotenv.config(); // Load environment variables from a .env file
 
 const PORT = process.env.PORT || 1200;
@@ -21,6 +22,7 @@ app.get('/', (req, res) => {
 
 // API route to fetch all documents from the "contactinquiries" collection
 app.get('/contacts', ContactDataGet);
+app.get('/inquiries',InquiriesDataGet);
 
 // 404 handler - must be defined **after** all routes
 app.use((req, res) => {
