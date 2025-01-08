@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
+import cors from "cors";
 import MongoDB from "./models/db.js";
 import contactRoutes from "./routes/contactRouter.js";
 import inquiries from "./routes/inquiriesRouter.js";
@@ -10,7 +11,7 @@ dotenv.config(); // Load environment variables from a .env file
 
 const PORT = process.env.PORT || 1200;
 const app = express();
-
+app.use(cors())
 // Middleware to parse JSON
 app.use(express.json());
 app.use(bodyParser.json());
