@@ -1,47 +1,40 @@
 import express from "express";
-import multer from "multer";
+import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import MongoDB from "./models/db.js";
-import ContactDataGet from "./controllers/contactDataGet.js";
-import InquiriesDataGet from "./controllers/inquiriesDataGet.js";
+import contactRoutes from "./routes/contactRouter.js";
+import inquiries from "./routes/inquiriesRouter.js";
+import gallery from "./routes/galleryRoutes.js";
+import blogRoutes from "./routes/bolgRouter.js";
 dotenv.config(); // Load environment variables from a .env file
 
 const PORT = process.env.PORT || 1200;
 const app = express();
 
+// Middleware to parse JSON
+app.use(express.json());
+app.use(bodyParser.json());
+
+// Parse incoming requests with urlencoded payloads
+app.use(bodyParser.urlencoded({ extended: true }));
 // Connect to MongoDB
 const dbUrl = process.env.mongodbURL;
 MongoDB({ url: dbUrl });
 
-// Middleware to parse JSON
-app.use(express.json());
-
 // Simple route for testing
 app.get("/", (req, res) => {
+  console.log(new Date ().toDateString());
+  
   res.send("Welcome to my Node.js server!");
 });
 
-// API route to fetch all documents from the "contactinquiries" collection
-app.get("/contacts", ContactDataGet);
-app.get("/inquiries", InquiriesDataGet);
+app.use("/contact",contactRoutes);
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "assets");
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + "-" + uniqueSuffix + "-" + file.originalname);
-  },
-});
+app.use("/inquiries", inquiries);
 
-const upload = multer({ storage: storage });
+app.use("/gallery" ,gallery);
 
-app.post("/gallery",upload.fields([{ name: "img", maxCount: 1 }]), async (req, res) => {
-   
-  }
-);
-
+app.use("/blog",blogRoutes);
 // 404 handler - must be defined **after** all routes
 app.use((req, res) => {
   res.status(404).send("Route not found");

@@ -22,6 +22,6 @@ const gallerySchema = new Schema(
 );
 
 // Create the model
-const Image = model('Image', imageSchema);
+const Image = mongoose.model.Image || model('Image',gallerySchema);
 
 export default Image;
