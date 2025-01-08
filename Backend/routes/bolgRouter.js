@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import { ObjectId } from 'mongodb';
 const blogRoutes = express.Router();
 
@@ -13,8 +14,7 @@ blogRoutes.post('/addblog', async (req, res) => {
         }
         
         // Assuming req.body.name is an array of names
-        const names = Array.isArray(req.body.name) ? req.body.name : [req.body.name];  // Ensure it's an array
-
+        // const names = Array.isArray(req.body.name) ? req.body.name : [req.body.name];  // Ensure it's an array
         // Create an array of file objects with ObjectId and filename
         const fileInfos = {
             youtube_url: req.body.url, // Assuming the request body contains 'url'
@@ -69,5 +69,18 @@ blogRoutes.put('/update/:id', async (req, res) => {
         }
 });
 
+blogRoutes.delete('/delete/:id', async (req, res) => {
+    try {
+        const db = global.dbClient.db('test'); // Replace with your database name
+        const collection = db.collection('blogCollections'); // Your collection name
+        const result = await collection.deleteOne({_id: new mongoose.Types.ObjectId(req.params.id)});
+        res.json(result);
+        console.log(`Deleted document with id: ${req.params.id}`);
+        
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
 
 export default blogRoutes;
