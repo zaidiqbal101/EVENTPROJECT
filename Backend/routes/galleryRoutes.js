@@ -9,19 +9,20 @@ const gallery = express.Router();
 gallery.post('/upload', upload.single('file'), async (req, res) => {
  
     try {
-        const db = global.dbClient.db('test');
-        /* create a collection to upload
-         await db.createCollection('galleryCollections');
-        console.log('Collection created');
-         */ 
+        const db = global.dbClient.db(process.env.dbName);
+        // create a collection to upload
+          await db.createCollection(process.env.gallery);
+         console.log('Collection created');
+         
         const fileInfo = {
             filename: req.file.path,
             created_at: new Date().toDateString(),
             updated_at: new Date().toDateString(),
           };
       
-          const result = await db.collection("galleryCollections").insertOne(fileInfo);
+          const result = await db.collection(process.env.gallery).insertOne(fileInfo);
           console.log('File information inserted:', result);
+          res.status(200).send('File uploaded successfully');
         }catch (e) {
             console.error(e);
             res.status(500).send('Server Error');
@@ -31,8 +32,8 @@ gallery.post('/upload', upload.single('file'), async (req, res) => {
 
 gallery.get('/getdata', async (req, res) => {
     try {
-        const db = global.dbClient.db('test'); // Replace with your database name
-        const collection = db.collection('galleryCollections'); // Your collection name
+        const db = global.dbClient.db(process.env.dbName); // Replace with your database name
+        const collection = db.collection(process.env.gallery); // Your collection name
     
         // Fetch all contacts
         const data = await collection.find({}).toArray();
@@ -47,10 +48,12 @@ gallery.get('/getdata', async (req, res) => {
 
 gallery.delete('/delete/:id', async (req, res) => {
     try {
-        const db = global.dbClient.db('test'); // Replace with your database name
-        const collection = db.collection('galleryCollections'); // Your collection name
-        const result = await collection.deleteOne({_id: new mongoose.Types.ObjectId(req.params.id)});
-        res.json(result);
+        const db = global.dbClient.db(process.env.dbName); // Replace with your database name
+        const collection = db.collection(process.env.gallery); // Your collection name
+        const data = await collection.find({}).toArray();
+        console.log(data);
+        
+        res.json(data);
         console.log(`Deleted document with id: ${req.params.id}`);
         
     } catch (err) {
@@ -61,8 +64,10 @@ gallery.delete('/delete/:id', async (req, res) => {
 
 gallery.put('/update/:id',  upload.single('file'), async (req, res) => {
     try {
-        const db = global.dbClient.db('test'); // Replace with your database name
-        const collection = db.collection('galleryCollections'); // Your collection name
+        const db = global.dbClient.db(process.env.dbName); // Replace with your database name
+        const collection = db.collection(process.env.gallery); // Your collection name
+        const data = await collection.deleteOne({_id: new mongoose.Types.ObjectId(req.params.id)});
+        res.json(data);
         const result = await collection.updateOne(
             { _id: new mongoose.Types.ObjectId(req.params.id) },
             { $set: { filename: req.file.path , updated_at : new Date().toDateString() }  }

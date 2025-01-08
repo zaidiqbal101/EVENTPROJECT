@@ -5,11 +5,11 @@ const blogRoutes = express.Router();
 
 blogRoutes.post('/addblog', async (req, res) => {
     try {
-        const db = global.dbClient.db('test');
+        const db = global.dbClient.db(process.env.dbName);
         // Create a collection to upload if it doesn't already exist
-        const collectionExists = await db.listCollections({ name: 'blogCollections' }).hasNext();
+        const collectionExists = await db.listCollections({ name: process.env.blog }).hasNext();
         if (!collectionExists) {
-            await db.createCollection('blogCollections');
+            await db.createCollection(process.env.blog);
             console.log('Collection created');
         }
         
@@ -26,7 +26,7 @@ blogRoutes.post('/addblog', async (req, res) => {
       
 
         // Insert a single document with an array of fileInfos
-        const result = await db.collection("blogCollections").insertOne(fileInfos);
+        const result = await db.collection(process.env.blog).insertOne(fileInfos);
         console.log('File information inserted:', result);
 
         res.status(200).send('Files added successfully');
@@ -38,8 +38,8 @@ blogRoutes.post('/addblog', async (req, res) => {
 
 blogRoutes.get('/getblog', async (req, res) => {
     try {
-        const db = global.dbClient.db('test'); // Replace with your database name
-        const collection = db.collection('blogCollections'); // Your collection name
+        const db = global.dbClient.db(process.env.dbName); // Replace with your database name
+        const collection = db.collection(process.env.blog); // Your collection name
     
         // Fetch all contacts
         const data = await collection.find({}).toArray();
@@ -54,8 +54,8 @@ blogRoutes.get('/getblog', async (req, res) => {
 
 blogRoutes.put('/update/:id', async (req, res) => {
     try {
-        const db = global.dbClient.db('test'); // Replace with your database name
-        const collection = db.collection('blogCollections'); // Your collection name
+        const db = global.dbClient.db(process.env.dbName); // Replace with your database name
+        const collection = db.collection(process.env.blog); // Your collection name
             const result = await collection.updateOne(
                   { _id: new mongoose.Types.ObjectId(req.params.id) },
                   { $set: { youtube_url: req.body.url, title: req.body.title, description: req.body.description, updated_at : new Date().toDateString() }  }
@@ -71,8 +71,8 @@ blogRoutes.put('/update/:id', async (req, res) => {
 
 blogRoutes.delete('/delete/:id', async (req, res) => {
     try {
-        const db = global.dbClient.db('test'); // Replace with your database name
-        const collection = db.collection('blogCollections'); // Your collection name
+        const db = global.dbClient.db(process.env.dbName); // Replace with your database name
+        const collection = db.collection(process.env.blog); // Your collection name
         const result = await collection.deleteOne({_id: new mongoose.Types.ObjectId(req.params.id)});
         res.json(result);
         console.log(`Deleted document with id: ${req.params.id}`);

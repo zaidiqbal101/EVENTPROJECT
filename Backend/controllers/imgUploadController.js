@@ -1,4 +1,5 @@
 import multer from 'multer';
+  // Import the path module to handle path creation
 
 // Configure multer's storage
 const storage = multer.diskStorage({
@@ -7,7 +8,9 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + "-" + uniqueSuffix + "-" + file.originalname); // Generate a unique filename
+    // Ensure the file name follows the pattern you want
+    const filename = file.fieldname + "-" + uniqueSuffix + "-" + file.originalname;
+    cb(null, filename); // Generate a unique filename
   },
 });
 
