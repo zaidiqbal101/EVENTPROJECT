@@ -65,7 +65,7 @@ gallery.put('/update/:id',  upload.single('file'), async (req, res) => {
         const collection = db.collection('galleryCollections'); // Your collection name
         const result = await collection.updateOne(
             { _id: new mongoose.Types.ObjectId(req.params.id) },
-            { $set: { filename: req.file.path , updated_at : new Date () }  }
+            { $set: { filename: req.file.path , updated_at : new Date().toDateString() }  }
           
         );
         res.json(result);

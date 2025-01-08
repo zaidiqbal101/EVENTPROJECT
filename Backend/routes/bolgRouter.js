@@ -52,4 +52,22 @@ blogRoutes.get('/getblog', async (req, res) => {
       }
 });
 
+blogRoutes.put('/update/:id', async (req, res) => {
+    try {
+        const db = global.dbClient.db('test'); // Replace with your database name
+        const collection = db.collection('blogCollections'); // Your collection name
+            const result = await collection.updateOne(
+                  { _id: new mongoose.Types.ObjectId(req.params.id) },
+                  { $set: { youtube_url: req.body.url, title: req.body.title, description: req.body.description, updated_at : new Date().toDateString() }  }
+            );
+            res.json(result);
+            console.log(`Updated document with id: ${req.params.id}`);
+            
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Server Error');
+        }
+});
+
+
 export default blogRoutes;
