@@ -4,8 +4,8 @@ const contactRoutes = express.Router();
 
 contactRoutes.get('/', async (req, res) => {
   try {
-    const db = global.dbClient.db('test'); // Replace with your database name
-    const collection = db.collection('contactinquiries'); // Your collection name
+    const db = global.dbClient.db(process.env.dbName); // Replace with your database name
+    const collection = db.collection(process.env.contact); // Your collection name
 
     // Fetch all contacts
     const contacts = await collection.find({}).toArray();

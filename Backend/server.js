@@ -24,8 +24,8 @@ MongoDB({ url: dbUrl });
 
 // Simple route for testing
 app.get("/", (req, res) => {
-  console.log(new Date ().toDateString());
-  
+  console.log(new Date().toDateString());
+  // This line should be after the async operations
   res.send("Welcome to my Node.js server!");
 });
 
