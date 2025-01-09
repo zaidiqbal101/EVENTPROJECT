@@ -13,7 +13,7 @@ import AlumuniParty from "../components/Event/AlumuniParty";
 import Gallery from "../components/Gallery";
 import Enquiry from "../components/Enquiry"
 import Vlog from "../components/Vlog";
-
+import Corporate from "../components/Event/corporateEvent";
 
 const AppRoutes = () => {
   return (
@@ -27,6 +27,7 @@ const AppRoutes = () => {
       <Route path="/events/RetirementParty" element={<RetirementParty />} />
       <Route path="/events/ThemeParty" element={<ThemeParty />} />
       <Route path="/events/ReunionParty" element={<ReunionParty />} />
+      <Route path="/events/Corporate" element={<Corporate />} />
       <Route path="/events/AlumuniParty" element={<AlumuniParty />} />
       <Route path="/Gallery" element={<Gallery/>}/>
       <Route path="/Enquiry" element={<Enquiry/>}/>

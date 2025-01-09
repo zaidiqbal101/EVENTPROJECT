@@ -2,7 +2,7 @@
 import express from 'express';
 const contactRoutes = express.Router();
 
-contactRoutes.get('/', async (req, res) => {
+contactRoutes.get('/getdata', async (req, res) => {
   try {
     const db = global.dbClient.db(process.env.dbName); // Replace with your database name
     const collection = db.collection(process.env.contact); // Your collection name

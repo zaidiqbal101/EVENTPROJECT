@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import MongoDB from "./models/db.js";
 import contactRoutes from "./routes/contactRouter.js";
-import inquiries from "./routes/inquiriesRouter.js";
+import events from "./routes/eventRouter.js";
 import gallery from "./routes/galleryRoutes.js";
 import blogRoutes from "./routes/bolgRouter.js";
 dotenv.config(); // Load environment variables from a .env file
@@ -29,9 +29,9 @@ app.get("/", (req, res) => {
   res.send("Welcome to my Node.js server!");
 });
 
-app.use("/contact",contactRoutes);
+app.use("/inquiries",contactRoutes);
 
-app.use("/inquiries", inquiries);
+app.use("/event", events);
 
 app.use("/gallery" ,gallery);
 

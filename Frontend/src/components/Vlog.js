@@ -1,54 +1,133 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const Vlog = () => {
-  const [events, setEvents] = useState([
-    { id: 1, url: "https://example.com", title: "John's Birthday", description: "Celebrating John's special day." },
-    { id: 2, url: "https://example.org", title: "Jane's Birthday", description: "A joyful celebration for Jane." },
-  ]);
-
+  const [events, setEvents] = useState([]);
   const [editEvent, setEditEvent] = useState(null);
+  const [newEvent, setNewEvent] = useState({ url: "", title: "", description: "" });
+  const [error, setError] = useState(null);
+  const [showNewEventForm, setShowNewEventForm] = useState(false);
+
+  // Fetch blogs from the API
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/blog/getblog');
+        const mappedBlogs = response.data.map((blog) => ({
+          id: blog._id,
+          url: blog.youtube_url,
+          title: blog.title,
+          description: blog.description,
+        }));
+        setEvents(mappedBlogs);
+      } catch (error) {
+        setError('Error fetching blog posts');
+        console.error('Error fetching blogs:', error.response ? error.response.data : error.message);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
 
   const handleEdit = (event) => {
     setEditEvent({ ...event });
   };
 
-  const handleDelete = (event) => {
-    setEvents(events.filter((e) => e.id !== event.id));
+  const handleDelete = async (event) => {
+    try {
+      await axios.delete(`http://localhost:8000/blog/delete/${event.id}`);
+      setEvents(events.filter((e) => e.id !== event.id));
+    } catch (error) {
+      setError('Error deleting blog post');
+      console.error('Error deleting blog post:', error.response ? error.response.data : error.message);
+    }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditEvent((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (editEvent) {
+      setEditEvent((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    } else {
+      setNewEvent((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
-  const handleSave = () => {
-    if (!editEvent) return;
-
-    setEvents(events.map((event) => (event.id === editEvent.id ? editEvent : event)));
-    setEditEvent(null);
+  const handleSave = async () => {
+    if (editEvent) {
+      try {
+        const response = await axios.put(`http://localhost:8000/blog/update/${editEvent.id}`, {
+          url: editEvent.url,
+          title: editEvent.title,
+          description: editEvent.description,
+        });
+        const responseBlogs = await axios.get('http://localhost:8000/blog/getblog');
+        const mappedBlogs = responseBlogs.data.map((blog) => ({
+          id: blog._id,
+          url: blog.youtube_url,
+          title: blog.title,
+          description: blog.description,
+        }));
+        setEvents(mappedBlogs);
+        setEditEvent(null);
+      } catch (error) {
+        setError('Error updating blog post');
+        console.error('Error updating blog post:', error.response ? error.response.data : error.message);
+      }
+    } else {
+      try {
+        await axios.post('http://localhost:8000/blog/addblog', newEvent);
+        const responseBlogs = await axios.get('http://localhost:8000/blog/getblog');
+        const mappedBlogs = responseBlogs.data.map((blog) => ({
+          id: blog._id,
+          url: blog.youtube_url,
+          title: blog.title,
+          description: blog.description,
+        }));
+        setEvents(mappedBlogs);
+        setNewEvent({ url: "", title: "", description: "" });
+        setShowNewEventForm(false);
+      } catch (error) {
+        setError('Error adding new blog post');
+        console.error('Error adding new blog post:', error.response ? error.response.data : error.message);
+      }
+    }
   };
 
   const handleCancel = () => {
     setEditEvent(null);
+    setShowNewEventForm(false);
+    setNewEvent({ url: "", title: "", description: "" });
   };
 
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Vlog</h2>
 
-      {editEvent ? (
+      {error && <div className="text-red-500 mb-4">{error}</div>}
+
+      <button
+        onClick={() => setShowNewEventForm(true)}
+        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md mb-4"
+      >
+        Add New Blog
+      </button>
+
+      {showNewEventForm || editEvent ? (
         <div className="bg-white p-6 rounded-lg shadow-md mb-4">
-          <h3 className="text-xl font-semibold mb-4">Edit Event</h3>
+          <h3 className="text-xl font-semibold mb-4">{editEvent ? "Edit Blog" : "Add New Blog"}</h3>
           <form className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">URL:</label>
               <input
                 type="text"
                 name="url"
-                value={editEvent.url}
+                value={editEvent ? editEvent.url : newEvent.url}
                 onChange={handleChange}
                 className="border rounded-md px-3 py-2 w-full"
               />
@@ -58,7 +137,7 @@ const Vlog = () => {
               <input
                 type="text"
                 name="title"
-                value={editEvent.title}
+                value={editEvent ? editEvent.title : newEvent.title}
                 onChange={handleChange}
                 className="border rounded-md px-3 py-2 w-full"
               />
@@ -67,7 +146,7 @@ const Vlog = () => {
               <label className="block text-sm font-medium mb-1">Description:</label>
               <textarea
                 name="description"
-                value={editEvent.description}
+                value={editEvent ? editEvent.description : newEvent.description}
                 onChange={handleChange}
                 className="border rounded-md px-3 py-2 w-full"
               />
@@ -78,7 +157,7 @@ const Vlog = () => {
                 onClick={handleSave}
                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors"
               >
-                Save
+                {editEvent ? "Save" : "Add"}
               </button>
               <button
                 type="button"

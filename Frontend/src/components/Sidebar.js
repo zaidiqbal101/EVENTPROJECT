@@ -138,6 +138,16 @@ const Sidebar = () => {
                 >
                   Alumuni Party
                 </NavLink>
+                <NavLink
+                  to="/events/Corporate"
+                  className={({ isActive }) =>
+                    `w-full text-left py-2 px-4 rounded ${
+                      isActive ? "bg-green-500 text-white" : "hover:bg-gray-600"
+                    }`
+                  }
+                >
+                  Corporate event
+                </NavLink>
               </div>
             )}
           </div>

@@ -1,12 +1,8 @@
-
-
-
-
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import axios from "axios";
 
-const BabyShower = () => {
+const Corporate = () => {
   const [events, setEvents] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -25,7 +21,7 @@ const BabyShower = () => {
             event.phone &&
             event.email &&
             event.location &&
-            event.eventType === "Baby Shower" && // Ensure the eventType is "Wedding"
+            event.eventType === "Corporate Event" && // Ensure the eventType is "Wedding"
             event.eventDate
         );
         console.log("Valid Events:", validEvents); // Log the valid filtered events
@@ -74,7 +70,7 @@ const BabyShower = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Baby Shower Events</h2>
+      <h2 className="text-2xl font-bold mb-4">Corporate Events</h2>
       <div className="mb-4 relative">
         <input
           type="text"
@@ -155,4 +151,4 @@ const BabyShower = () => {
   );
 };
 
-export default BabyShower;
+export default Corporate;
