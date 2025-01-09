@@ -59,21 +59,48 @@ blogRoutes.get('/getblog', async (req, res) => {
     }
 });
 
+// blogRoutes.put('/update/:id', async (req, res) => {
+//     try {
+//         const db = global.dbClient.db(process.env.dbName); // Replace with your database name
+//         const collection = db.collection(process.env.blog); // Your collection name
+//             const result = await collection.updateOne(
+//                   { _id: new mongoose.Types.ObjectId(req.params.id) },
+//                   { $set: { youtube_url: req.body.url, title: req.body.title, description: req.body.description, updated_at : new Date().toDateString() }  }
+//             );
+//             res.status(200).json({ message: 'Successfully update ' });
+//             console.log(`Updated document with id: ${req.params.id}`);
+            
+//         } catch (err) {
+//             console.error(err);
+//             res.status(500).send('Server Error');
+//         }
+// });
+
 blogRoutes.put('/update/:id', async (req, res) => {
     try {
         const db = global.dbClient.db(process.env.dbName); // Replace with your database name
         const collection = db.collection(process.env.blog); // Your collection name
-            const result = await collection.updateOne(
-                  { _id: new mongoose.Types.ObjectId(req.params.id) },
-                  { $set: { youtube_url: req.body.url, title: req.body.title, description: req.body.description, updated_at : new Date().toDateString() }  }
-            );
-            res.status(200).json({ message: 'Successfully update ' });
+        const result = await collection.updateOne(
+            { _id: new mongoose.Types.ObjectId(req.params.id) },
+            {
+                $set: {
+                    youtube_url: req.body.url,   // Make sure you're using the correct field name here
+                    title: req.body.title,
+                    description: req.body.description,
+                    updated_at: new Date().toDateString(),
+                }
+            }
+        );
+        if (result.modifiedCount > 0) {
+            res.status(200).json({ message: 'Successfully updated' });
             console.log(`Updated document with id: ${req.params.id}`);
-            
-        } catch (err) {
-            console.error(err);
-            res.status(500).send('Server Error');
+        } else {
+            res.status(400).json({ message: 'No changes made' });
         }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
 });
 
 blogRoutes.delete('/delete/:id', async (req, res) => {

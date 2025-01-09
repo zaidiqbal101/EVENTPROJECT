@@ -1,14 +1,14 @@
 import express from 'express';
 
-const inquiries = express.Router();
+const events = express.Router();
 
-inquiries.get('/', async (req, res) => {
+events.get('/getdata', async (req, res) => {
   try {
     const db = global.dbClient.db(process.env.dbName); // Replace with your database name
     const collection = db.collection(process.env.inquiry); // Your collection name
 
     // Fetch all contacts
-    const contacts = await collection.find({}).toArray();
+     const contacts = await collection.find({}).toArray();
 
     // Send the contacts as a JSON response
     res.status(200).json(contacts);
@@ -18,4 +18,4 @@ inquiries.get('/', async (req, res) => {
   }
 });
 
-export default inquiries;
+export default events;

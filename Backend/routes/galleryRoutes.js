@@ -83,7 +83,7 @@ gallery.put("/update/:id", upload.single("file"), async (req, res) => {
     // Update the database document with the new image URL and updated timestamp
     const updateDB = await collection.updateOne(
       { _id: new mongoose.Types.ObjectId(req.params.id) },
-      { $set: { filename: uploadResult.secure_url, updated_at: new Date() } }
+      { $set: { filename: uploadResult.secure_url, updated_at: new Date().toDateString() } }
     );
 
     // Check if the update was successful
