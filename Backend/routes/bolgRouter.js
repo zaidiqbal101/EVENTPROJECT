@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+
 import { ObjectId } from 'mongodb';
 const blogRoutes = express.Router();
 
@@ -29,7 +30,7 @@ blogRoutes.post('/addblog', async (req, res) => {
         const result = await db.collection(process.env.blog).insertOne(fileInfos);
         console.log('File information inserted:', result);
 
-        res.status(200).send('Files added successfully');
+        res.status(200).send({ message: 'Successfully add vlog ' });
     } catch (e) {
         console.error(e);
         res.status(500).send('Server Error');
@@ -38,18 +39,24 @@ blogRoutes.post('/addblog', async (req, res) => {
 
 blogRoutes.get('/getblog', async (req, res) => {
     try {
-        const db = global.dbClient.db(process.env.dbName); // Replace with your database name
-        const collection = db.collection(process.env.blog); // Your collection name
+        const db = global.dbClient.db(process.env.dbName); // Access the database
+        const collection = db.collection(process.env.blog); // Access the collection
     
-        // Fetch all contacts
+        // Fetch all blog posts (documents) from the collection
         const data = await collection.find({}).toArray();
-    
-        // Send the contacts as a JSON response
+        
+        // If no data is found, send an empty array
+        if (data.length === 0) {
+            return res.status(404).json({ message: 'No blog posts found' });
+        }
+
+        // Send the fetched data as a JSON response
         res.status(200).json(data);
-      } catch (err) {
-        // Handle errors and send an error message
-        res.status(500).send('Error fetching contacts: ' + err.message);
-      }
+    } catch (err) {
+        // Handle errors and send a detailed error message
+        console.error('Error fetching blog posts:', err);
+        res.status(500).json({ message: 'Error fetching blog posts', error: err.message });
+    }
 });
 
 blogRoutes.put('/update/:id', async (req, res) => {
@@ -60,7 +67,7 @@ blogRoutes.put('/update/:id', async (req, res) => {
                   { _id: new mongoose.Types.ObjectId(req.params.id) },
                   { $set: { youtube_url: req.body.url, title: req.body.title, description: req.body.description, updated_at : new Date().toDateString() }  }
             );
-            res.json(result);
+            res.status(200).json({ message: 'Successfully update ' });
             console.log(`Updated document with id: ${req.params.id}`);
             
         } catch (err) {
@@ -71,16 +78,29 @@ blogRoutes.put('/update/:id', async (req, res) => {
 
 blogRoutes.delete('/delete/:id', async (req, res) => {
     try {
-        const db = global.dbClient.db(process.env.dbName); // Replace with your database name
-        const collection = db.collection(process.env.blog); // Your collection name
-        const result = await collection.deleteOne({_id: new mongoose.Types.ObjectId(req.params.id)});
-        res.json(result);
+        const db = global.dbClient.db(process.env.dbName); // Access the database
+        const collection = db.collection(process.env.blog); // Access the collection
+
+        // Validate the ID before using it
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ message: 'Invalid ID format' });
+        }
+
+        // Attempt to delete the document
+        const result = await collection.deleteOne({ _id: new mongoose.Types.ObjectId(req.params.id) });
+
+        // Check if a document was deleted
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: 'Document not found' });
+        }
+
+        res.status(200).json({ message: 'Successfully deleted', id: req.params.id });
         console.log(`Deleted document with id: ${req.params.id}`);
-        
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+        console.error('Error during deletion:', err);
+        res.status(500).json({ message: 'Server Error' });
     }
 });
+
 
 export default blogRoutes;

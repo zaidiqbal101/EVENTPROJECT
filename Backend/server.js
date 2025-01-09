@@ -1,10 +1,7 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
 import express from "express";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import cors from "cors";
-import fs from "fs";
 import MongoDB from "./models/db.js";
 import contactRoutes from "./routes/contactRouter.js";
 import inquiries from "./routes/inquiriesRouter.js";
@@ -22,32 +19,12 @@ app.use(bodyParser.json());
 // Parse incoming requests with urlencoded payloads
 app.use(bodyParser.urlencoded({ extended: true }));
 // Connect to MongoDB
-const __filename = fileURLToPath(import.meta.url); // Convert module URL to file path
-const __dirname = path.dirname(__filename); // Get the directory name from the file path
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
-
 const dbUrl = process.env.mongodbURL;
 MongoDB({ url: dbUrl });
 
 // Simple route for testing
 app.get("/", (req, res) => {
   console.log(new Date().toDateString());
-
-  const filePath = './assets/file-1736311864622-956990541-Screenshot 2024-12-30 115122.png';
-
-  fs.access(filePath, fs.constants.F_OK, (err) => {
-    if (err) {
-      console.error('File does not exist:', filePath);
-      return;
-    }
-
-    // File exists, proceed to delete
-    fs.unlink(filePath, (err) => {
-      if (err) throw err;
-      console.log('File deleted!');
-    });
-  });
-
   // This line should be after the async operations
   res.send("Welcome to my Node.js server!");
 });
