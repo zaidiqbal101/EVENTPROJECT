@@ -1,14 +1,14 @@
-import express from 'express';
-import mongoose from "mongoose";
-const events = express.Router();
 
-events.get('/getdata', async (req, res) => {
+import express from 'express';
+const inquiriesRouter = express.Router();
+import mongoose from "mongoose";
+inquiriesRouter.get('/getdata', async (req, res) => {
   try {
     const db = global.dbClient.db(process.env.dbName); // Replace with your database name
-    const collection = db.collection(process.env.inquiry); // Your collection name
+    const collection = db.collection(process.env.contact); // Your collection name
 
     // Fetch all contacts
-     const contacts = await collection.find({}).toArray();
+    const contacts = await collection.find({}).toArray();
 
     // Send the contacts as a JSON response
     res.status(200).json(contacts);
@@ -18,10 +18,10 @@ events.get('/getdata', async (req, res) => {
   }
 });
 
-events.delete('/delete/:id', async (req, res) => {
+inquiriesRouter.delete('/delete/:id', async (req, res) => {
     try {
         const db = global.dbClient.db(process.env.dbName); // Access the database
-        const collection = db.collection(process.env.inquiry); // Access the collection
+        const collection = db.collection(process.env.contact); // Access the collection
 
         // Validate the ID before using it
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -44,4 +44,6 @@ events.delete('/delete/:id', async (req, res) => {
     }
 });
 
-export default events;
+// Export the router
+export default inquiriesRouter;
+

@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import cors from "cors";
 import MongoDB from "./models/db.js";
-import contactRoutes from "./routes/contactRouter.js";
+import inquiriesRouter from "./routes/inquiriesRouter.js";
 import events from "./routes/eventRouter.js";
 import gallery from "./routes/galleryRoutes.js";
 import blogRoutes from "./routes/bolgRouter.js";
@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to my Node.js server!");
 });
 
-app.use("/inquiries",contactRoutes);
+app.use("/inquiries",inquiriesRouter);
 
 app.use("/event", events);
 
