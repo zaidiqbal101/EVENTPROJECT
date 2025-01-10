@@ -5,7 +5,7 @@ const events = express.Router();
 events.get('/getdata', async (req, res) => {
   try {
     const db = global.dbClient.db(process.env.dbName); // Replace with your database name
-    const collection = db.collection(process.env.inquiry); // Your collection name
+    const collection = db.collection(process.env.event); // Your collection name
 
     // Fetch all contacts
      const contacts = await collection.find({}).toArray();
@@ -20,7 +20,7 @@ events.get('/getdata', async (req, res) => {
 events.put('/update/:id', async (req, res) => {
   try {
       const db = global.dbClient.db(process.env.dbName); // Access the database
-      const collection = db.collection(process.env.inquiry); // Access the collection
+      const collection = db.collection(process.env.event); // Access the collection
 
       // Validate the ID before using it
       if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -54,7 +54,7 @@ events.put('/update/:id', async (req, res) => {
 events.delete('/delete/:id', async (req, res) => {
     try {
         const db = global.dbClient.db(process.env.dbName); // Access the database
-        const collection = db.collection(process.env.inquiry); // Access the collection
+        const collection = db.collection(process.env.event); // Access the collection
 
         // Validate the ID before using it
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
