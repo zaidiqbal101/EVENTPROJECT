@@ -115,7 +115,7 @@ const Vlog = () => {
         onClick={() => setShowNewEventForm(true)}
         className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md mb-4"
       >
-        Add New Blog
+        +Add New Vlog
       </button>
 
       {showNewEventForm || editEvent ? (
