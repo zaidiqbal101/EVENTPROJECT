@@ -17,7 +17,7 @@ const BabyShower = () => {
     // Fetch data from API
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/event/getdata");
+        const response = await axios.get(`${process.env.REACT_APP_URL}/event/getdata`);
         console.log("Fetched Events:", response.data); // Debugging log to check API response
         // Filter out events missing required fields and ensure the eventType is "Wedding"
         const validEvents = response.data.filter(
@@ -60,7 +60,7 @@ const BabyShower = () => {
 
   const handleDelete = async (event) => {
     try {
-      const rep = await axios.delete(`http://localhost:8000/event/delete/${event._id}`);
+      const rep = await axios.delete(`${process.env.REACT_APP_URL}/event/delete/${event._id}`);
 setEvents(events.filter((e) => e._id !== event._id));
 
     } catch (error) {
