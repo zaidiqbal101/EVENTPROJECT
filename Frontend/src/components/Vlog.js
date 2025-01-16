@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+// import dotenv from "dotenv";
+// dotenv.config()
 const Vlog = () => {
+
   const [events, setEvents] = useState([]);
   const [editEvent, setEditEvent] = useState(null);
   const [newEvent, setNewEvent] = useState({ url: "", title: "", description: "" });
@@ -12,11 +14,13 @@ const Vlog = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/blog/getblog');
+        const response = await axios.get(`${process.env.REACT_APP_URL}/blog/getblog`);
         const mappedBlogs = response.data.map((blog) => ({
           id: blog._id,
           url: blog.youtube_url,
           title: blog.title,
+          created: blog.created_at,
+          updated: blog.updated_at,
           description: blog.description,
         }));
         setEvents(mappedBlogs);
@@ -35,7 +39,7 @@ const Vlog = () => {
 
   const handleDelete = async (event) => {
     try {
-      await axios.delete(`http://localhost:8000/blog/delete/${event.id}`);
+      await axios.delete(`${process.env.REACT_APP_URL}/blog/delete/${event.id}`);
       setEvents(events.filter((e) => e.id !== event.id));
     } catch (error) {
       setError('Error deleting blog post');
@@ -61,16 +65,18 @@ const Vlog = () => {
   const handleSave = async () => {
     if (editEvent) {
       try {
-        const response = await axios.put(`http://localhost:8000/blog/update/${editEvent.id}`, {
+        const response = await axios.put(`${process.env.REACT_APP_URL}/blog/update/${editEvent.id}`, {
           url: editEvent.url,
           title: editEvent.title,
           description: editEvent.description,
         });
-        const responseBlogs = await axios.get('http://localhost:8000/blog/getblog');
+        const responseBlogs = await axios.get(`${process.env.REACT_APP_URL}/blog/getblog`);
         const mappedBlogs = responseBlogs.data.map((blog) => ({
           id: blog._id,
           url: blog.youtube_url,
           title: blog.title,
+          created: blog.created_at,
+          updated: blog.updated_at,
           description: blog.description,
         }));
         setEvents(mappedBlogs);
@@ -81,12 +87,14 @@ const Vlog = () => {
       }
     } else {
       try {
-        await axios.post('http://localhost:8000/blog/addblog', newEvent);
-        const responseBlogs = await axios.get('http://localhost:8000/blog/getblog');
+        await axios.post(`${process.env.REACT_APP_URL}/blog/addblog`, newEvent);
+        const responseBlogs = await axios.get(`${process.env.REACT_APP_URL}/blog/getblog`);
         const mappedBlogs = responseBlogs.data.map((blog) => ({
           id: blog._id,
           url: blog.youtube_url,
           title: blog.title,
+          created: blog.created_at,
+          updated: blog.updated_at,
           description: blog.description,
         }));
         setEvents(mappedBlogs);
@@ -176,6 +184,8 @@ const Vlog = () => {
               <tr>
                 <th className="border-b px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">URL</th>
                 <th className="border-b px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                <th className="border-b px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                <th className="border-b px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Updated</th>
                 <th className="border-b px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                 <th className="border-b px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
@@ -189,6 +199,8 @@ const Vlog = () => {
                     </a>
                   </td>
                   <td className="px-6 py-4">{event.title}</td>
+                  <td className="px-6 py-4">{event.created}</td>
+                  <td className="px-6 py-4">{event.updated}</td>
                   <td className="px-6 py-4">{event.description}</td>
                   <td className="px-6 py-4">
                     <button

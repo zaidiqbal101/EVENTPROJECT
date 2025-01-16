@@ -15,7 +15,7 @@ const Gallery = () => {
   useEffect(() => {
     const fetchGallery = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/gallery/getdata");
+        const response = await axios.get(`${process.env.REACT_APP_URL}/gallery/getdata`);
         const mappedGallery = response.data.map((item) => ({
           id: item._id,
           image: item.filename,
@@ -61,13 +61,13 @@ const Gallery = () => {
     setUploading(true);
 
     try {
-      await axios.post("http://localhost:8000/gallery/upload", formData, {
+      await axios.post(`${process.env.REACT_APP_URL}/gallery/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
 
-      const responseGallery = await axios.get("http://localhost:8000/gallery/getdata");
+      const responseGallery = await axios.get(`${process.env.REACT_APP_URL}/gallery/getdata`);
       const mappedGallery = responseGallery.data.map((item) => ({
         id: item._id,
         image: item.filename,
@@ -104,13 +104,13 @@ const Gallery = () => {
     setUploading(true);
 
     try {
-      await axios.put(`http://localhost:8000/gallery/update/${editEvent.id}`, formData, {
+      await axios.put(`${process.env.REACT_APP_URL}/gallery/update/${editEvent.id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
 
-      const responseGallery = await axios.get("http://localhost:8000/gallery/getdata");
+      const responseGallery = await axios.get(`${process.env.REACT_APP_URL}/gallery/getdata`);
       const mappedGallery = responseGallery.data.map((item) => ({
         id: item._id,
         image: item.filename,
@@ -129,7 +129,7 @@ const Gallery = () => {
 
   const handleDelete = async (event) => {
     try {
-      const response = await axios.delete(`http://localhost:8000/gallery/delete/${event.id}`);
+      const response = await axios.delete(`${process.env.REACT_APP_URL}/gallery/delete/${event.id}`);
       if (response.status === 200) {
         setEvents(events.filter((e) => e.id !== event.id));
         console.log("Item deleted successfully");

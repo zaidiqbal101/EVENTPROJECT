@@ -9,7 +9,7 @@ const Enquiry = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/inquiries/getdata");
+        const response = await axios.get(`${process.env.REACT_APP_URL}/inquiries/getdata`);
         const fetchedEvents = response.data.map((event) => ({
           id: event._id,
           name: event.name,
@@ -29,13 +29,13 @@ const Enquiry = () => {
     fetchEvents();
   }, []);
 
-  const handleEdit = (event) => {
-    setEditEvent(event); // Set the event data to the state for editing
-  };
+  // const handleEdit = (event) => {
+  //   setEditEvent(event); // Set the event data to the state for editing
+  // };
 
   const handleDelete = async (eventId) => {
     try {
-      await axios.delete(`http://localhost:8000/inquiries/delete/${eventId}`); // Make API call to delete the event
+      await axios.delete(`${process.env.REACT_APP_URL}/inquiries/delete/${eventId}`); // Make API call to delete the event
       setEvents(events.filter((event) => event.id !== eventId)); // Remove the event from state after successful deletion
     } catch (error) {
       console.error("Error deleting event:", error.message);
@@ -50,7 +50,7 @@ const Enquiry = () => {
       const updatedEvent = { ...editEvent, eventDate: editEvent.date }; // Adjust date format if necessary
 
       // Make API call to update the event
-      await axios.put(`http://localhost:8000/inquiries/update/${editEvent.id}`, updatedEvent);
+      await axios.put(`${process.env.REACT_APP_URL}/inquiries/update/${editEvent.id}`, updatedEvent);
 
       // Update the state with the new data
       setEvents(events.map((event) => (event.id === editEvent.id ? updatedEvent : event)));
@@ -188,12 +188,12 @@ const Enquiry = () => {
                   <td key={field} className="px-6 py-4">{event[field]}</td>
                 ))}
                 <td className="px-6 py-4">
-                  <button
+                  {/* <button
                     onClick={() => handleEdit(event)}
                     className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md mr-2 transition-colors"
                   >
                     Edit
-                  </button>
+                  </button> */}
                   <button
                     onClick={() => handleDelete(event.id)}
                     className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition-colors"
